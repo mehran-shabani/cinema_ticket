@@ -5,10 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5f5f3be-f1e4-4831-a81b-914cff3b8831" name="Changes" comment="add project">
-      <change afterPath="$PROJECT_DIR$/.gitigonre" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cinema.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cinema_ticket" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,6 +67,7 @@
       <workItem from="1718736746210" duration="1030000" />
       <workItem from="1718737810492" duration="33000" />
       <workItem from="1718737862265" duration="62000" />
+      <workItem from="1718737946800" duration="226000" />
     </task>
     <task id="LOCAL-00001" summary="add project">
       <option name="closed" value="true" />
