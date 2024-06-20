@@ -9,14 +9,14 @@ class Movie:
         self.cinema_id = cinema_id
 
     @staticmethod
-    def create_movie(title, cinema_id):
+    def create_movie(title, cinema_id, db='cinema.db'):
         movie_id = str(uuid.uuid4())
         movie = Movie(movie_id, title, 0.0, cinema_id)
-        movie.save_to_db()
+        movie.save_to_db(db)
         return movie
 
-    def save_to_db(self):
-        conn = sqlite3.connect('cinema.db')
+    def save_to_db(self, db='cinema.db'):
+        conn = sqlite3.connect(db)
         cursor = conn.cursor()
         cursor.execute('''
         INSERT INTO movies (movie_id, title, rating, cinema_id)
@@ -26,8 +26,8 @@ class Movie:
         conn.close()
 
     @staticmethod
-    def get_movie_by_id(movie_id):
-        conn = sqlite3.connect('cinema.db')
+    def get_movie_by_id(movie_id, db='cinema.db'):
+        conn = sqlite3.connect(db)
         cursor = conn.cursor()
         cursor.execute('''
         SELECT * FROM movies WHERE movie_id = ?
@@ -39,8 +39,8 @@ class Movie:
         return None
 
     @staticmethod
-    def get_movies_by_cinema_id(cinema_id):
-        conn = sqlite3.connect('cinema.db')
+    def get_movies_by_cinema_id(cinema_id, db='cinema.db'):
+        conn = sqlite3.connect(db)
         cursor = conn.cursor()
         cursor.execute('''
         SELECT * FROM movies WHERE cinema_id = ?

@@ -11,14 +11,14 @@ class Reservation:
         self.status = status
 
     @staticmethod
-    def create_reservation(user_id, movie_id, showtime_id, seat_number):
+    def create_reservation(user_id, movie_id, showtime_id, seat_number, db='cinema.db'):
         reservation_id = str(uuid.uuid4())
         reservation = Reservation(reservation_id, user_id, movie_id, showtime_id, seat_number, "reserved")
-        reservation.save_to_db()
+        reservation.save_to_db(db)
         return reservation
 
-    def save_to_db(self):
-        conn = sqlite3.connect('cinema.db')
+    def save_to_db(self, db='cinema.db'):
+        conn = sqlite3.connect(db)
         cursor = conn.cursor()
         cursor.execute('''
         INSERT INTO reservations (reservation_id, user_id, movie_id, showtime_id, seat_number, status)
@@ -28,8 +28,8 @@ class Reservation:
         conn.close()
 
     @staticmethod
-    def get_reservation_by_id(reservation_id):
-        conn = sqlite3.connect('cinema.db')
+    def get_reservation_by_id(reservation_id, db='cinema.db'):
+        conn = sqlite3.connect(db)
         cursor = conn.cursor()
         cursor.execute('''
         SELECT * FROM reservations WHERE reservation_id = ?
@@ -41,8 +41,8 @@ class Reservation:
         return None
 
     @staticmethod
-    def get_reservations_by_user_id(user_id):
-        conn = sqlite3.connect('cinema.db')
+    def get_reservations_by_user_id(user_id, db='cinema.db'):
+        conn = sqlite3.connect(db)
         cursor = conn.cursor()
         cursor.execute('''
         SELECT * FROM reservations WHERE user_id = ?

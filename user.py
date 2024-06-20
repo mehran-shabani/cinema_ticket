@@ -1,5 +1,4 @@
 import uuid
-import re
 import hashlib
 import datetime
 import sqlite3
@@ -18,20 +17,20 @@ class User:
         self.last_login = last_login
 
     @staticmethod
-    def create_user(username, email, password, birth_date, phone_number=None):
+    def create_user(username, email, password, birth_date, phone_number=None, db='cinema.db'):
         user_id = str(uuid.uuid4())
         hashed_password = User.hash_password(password)
         registration_date = datetime.datetime.now().isoformat()
         user = User(user_id, username, email, phone_number, hashed_password, birth_date, registration_date, 0.0, "Bronze")
-        user.save_to_db()
+        user.save_to_db(db)
         return user
 
     @staticmethod
     def hash_password(password):
         return hashlib.sha256(password.encode()).hexdigest()
 
-    def save_to_db(self):
-        conn = sqlite3.connect('cinema.db')
+    def save_to_db(self, db='cinema.db'):
+        conn = sqlite3.connect(db)
         cursor = conn.cursor()
         cursor.execute('''
         INSERT INTO users (user_id, username, email, phone_number, password, birth_date, registration_date, wallet_balance, subscription, last_login)
@@ -41,8 +40,8 @@ class User:
         conn.close()
 
     @staticmethod
-    def get_user_by_username(username):
-        conn = sqlite3.connect('cinema.db')
+    def get_user_by_username(username, db='cinema.db'):
+        conn = sqlite3.connect(db)
         cursor = conn.cursor()
         cursor.execute('''
         SELECT * FROM users WHERE username = ?
@@ -54,8 +53,8 @@ class User:
         return None
 
     @staticmethod
-    def get_user_by_id(user_id):
-        conn = sqlite3.connect('cinema.db')
+    def get_user_by_id(user_id, db='cinema.db'):
+        conn = sqlite3.connect(db)
         cursor = conn.cursor()
         cursor.execute('''
         SELECT * FROM users WHERE user_id = ?

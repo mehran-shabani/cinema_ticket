@@ -39,7 +39,7 @@ def handle_request(request, cinema_system):
             return f"کاربر {user.username} با موفقیت ثبت نام شد"
         elif action == "login":
             username = request.get("username")
-            user = cinema_system.get_user(username)
+            user = cinema_system.get_user_by_username(username)
             if user:
                 return f"خوش آمدید {user.username}"
             else:
@@ -56,12 +56,8 @@ def handle_request(request, cinema_system):
             return f"رزرو {reservation.reservation_id} با موفقیت انجام شد"
         elif action == "view_reservations":
             user_id = request.get("user_id")
-            user = cinema_system.get_user(user_id)
-            if user:
-                reservations = cinema_system.view_reservations(user)
-                return reservations
-            else:
-                return "کاربر یافت نشد"
+            reservations = cinema_system.view_reservations(user_id)
+            return reservations
         else:
             return "عملیات نامعتبر"
     except Exception as e:

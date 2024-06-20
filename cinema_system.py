@@ -2,6 +2,7 @@ import os
 import threading
 import socket
 import pickle
+import sqlite3
 from user import User
 from cinema import Cinema
 from movie import Movie
@@ -22,42 +23,40 @@ def pause_and_clear():
 
 
 class CinemaSystem:
-    def __init__(self):
-        self.users = []
-        self.cinemas = []
-        self.reservations = []
+    def __init__(self, db='cinema.db'):
+        self.db = db
 
     def register_user(self, username, email, password, birth_date, phone_number=None):
-        new_user = User(username, email, password, birth_date, phone_number)
-        self.users.append(new_user)
-        return new_user
+        return User.create_user(username, email, password, birth_date, phone_number, self.db)
 
-    def add_cinema(self, cinema_name):
-        new_cinema = Cinema(cinema_name)
-        self.cinemas.append(new_cinema)
-        return new_cinema
+    def get_user_by_username(self, username):
+        return User.get_user_by_username(username, self.db)
 
-    def add_movie(self, cinema_name, movie_title):
-        cinema = self.get_cinema(cinema_name)
-        if cinema:
-            new_movie = Movie(title=movie_title, cinema_id=cinema.cinema_id)
-            cinema.add_movie(new_movie)
-            return new_movie
-        return None
+    def get_user_by_id(self, user_id):
+        return User.get_user_by_id(user_id, self.db)
+
+    def view_cinemas(self):
+        conn = sqlite3.connect(self.db)
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM cinemas')
+        cinemas = cursor.fetchall()
+        conn.close()
+        return [Cinema(*cinema) for cinema in cinemas]
+
+    def add_cinema(self, name):
+        return Cinema.create_cinema(name, self.db)
+
+    def get_cinema(self, name):
+        return Cinema.get_cinema_by_name(name, self.db)
+
+    def add_movie(self, title, cinema_id):
+        return Movie.create_movie(title, cinema_id, self.db)
 
     def make_reservation(self, user_id, movie_id, showtime_id, seat_number):
-        new_reservation = Reservation(user_id, movie_id, showtime_id, seat_number)
-        self.reservations.append(new_reservation)
-        return new_reservation
+        return Reservation.create_reservation(user_id, movie_id, showtime_id, seat_number, self.db)
 
-    def get_user(self, username):
-        return User.get_user(username)
-
-    def get_cinema(self, cinema_name):
-        for cinema in self.cinemas:
-            if cinema.name == cinema_name:
-                return cinema
-        return None
+    def view_reservations(self, user_id):
+        return Reservation.get_reservations_by_user_id(user_id, self.db)
 
     def display_menu(self):
         clear_screen()
@@ -102,7 +101,7 @@ class CinemaSystem:
                 pause_and_clear()
             elif choice == "2":
                 username = input("نام کاربری: ")
-                user = self.get_user(username)
+                user = self.get_user_by_username(username)
                 if user:
                     print(f"خوش آمدید {user.username}")
                     pause_and_clear()
@@ -116,9 +115,10 @@ class CinemaSystem:
                                 pause_and_clear()
                             elif user_choice == "2":
                                 cinema_name = input("نام سینما: ")
-                                movie_title = input("نام فیلم: ")
-                                new_movie = self.add_movie(cinema_name, movie_title)
-                                if new_movie:
+                                cinema = self.get_cinema(cinema_name)
+                                if cinema:
+                                    movie_title = input("نام فیلم: ")
+                                    new_movie = self.add_movie(movie_title, cinema.cinema_id)
                                     print(f"فیلم {movie_title} با موفقیت به سینما {cinema_name} اضافه شد")
                                 else:
                                     print("سینما یافت نشد.")
@@ -141,12 +141,12 @@ class CinemaSystem:
                                     movie_title = input("نام فیلم: ")
                                     showtime_id = input("سانس (YYYY-MM-DD HH:MM): ")
                                     seat_number = input("شماره صندلی: ")
-                                    reservation = self.make_reservation(user.user_id, cinema.movie_id, showtime_id,
+                                    reservation = self.make_reservation(user.user_id, movie_title, showtime_id,
                                                                         seat_number)
                                     print(f"رزرو {reservation.reservation_id} با موفقیت انجام شد")
                                     pause_and_clear()
                             elif user_choice == "3":
-                                self.view_reservations(user)
+                                self.view_reservations(user.user_id)
                             elif user_choice == "4":
                                 break
                             else:
@@ -164,21 +164,22 @@ class CinemaSystem:
 
     def view_cinemas(self):
         clear_screen()
-        if not self.cinemas:
+        cinemas = self.view_cinemas()
+        if not cinemas:
             print("هیچ سینمایی موجود نیست.")
-        for cinema in self.cinemas:
+        for cinema in cinemas:
             print(f"سینما: {cinema.name}")
             for movie in cinema.movies:
                 print(f" - فیلم: {movie.title}, امتیاز: {movie.rating}, سانس‌ها: {movie.showtimes}")
         input("برای بازگشت به منو کلیدی فشار دهید...")
         clear_screen()
 
-    def view_reservations(self, user):
+    def view_reservations(self, user_id):
         clear_screen()
-        user_reservations = [r for r in self.reservations if r.user_id == user.user_id]
-        if not user_reservations:
+        reservations = self.view_reservations(user_id)
+        if not reservations:
             print("هیچ رزروی یافت نشد.")
-        for reservation in user_reservations:
+        for reservation in reservations:
             print(
                 f"رزرو: {reservation.reservation_id}, شناسه فیلم: {reservation.movie_id}, سانس: {reservation.showtime_id}, صندلی: {reservation.seat_number}, وضعیت: {reservation.status}")
         input("برای بازگشت به منو کلیدی فشار دهید...")
@@ -208,11 +209,11 @@ def handle_request(request, cinema_system):
             password = request.get("password")
             birth_date = request.get("birth_date")
             phone_number = request.get("phone_number")
-            user = User.create_user(username, email, password, birth_date, phone_number)
+            user = cinema_system.register_user(username, email, password, birth_date, phone_number)
             return f"کاربر {user.username} با موفقیت ثبت نام شد"
         elif action == "login":
             username = request.get("username")
-            user = User.get_user_by_username(username)
+            user = cinema_system.get_user_by_username(username)
             if user:
                 return f"خوش آمدید {user.username}"
             else:
@@ -229,19 +230,13 @@ def handle_request(request, cinema_system):
             return f"رزرو {reservation.reservation_id} با موفقیت انجام شد"
         elif action == "view_reservations":
             user_id = request.get("user_id")
-            user = User.get_user_by_id(user_id)
-            if user:
-                reservations = cinema_system.view_reservations(user)
-                return reservations
-            else:
-                return "کاربر یافت نشد"
+            reservations = cinema_system.view_reservations(user_id)
+            return reservations
         else:
             return "عملیات نامعتبر"
     except Exception as e:
         print("Error handling request:", e)
         return "خطا در پردازش درخواست"
-
-
 
 
 def server():

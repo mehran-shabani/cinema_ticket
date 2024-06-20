@@ -3,19 +3,20 @@ import sqlite3
 
 
 class BankAccount:
-    def __init__(self, user_id, account_number, password, cvv2, initial_balance=0):
+    def __init__(self, user_id, account_number, password, cvv2, initial_balance=0, db='cinema.db'):
         self.account_number = account_number
         self.user_id = user_id
         self.password = self.hash_password(password)
         self.cvv2 = cvv2
         self.balance = initial_balance
+        self._db = db  # Make the database configurable
         self.save_to_db()
 
     def hash_password(self, password):
         return hashlib.sha256(password.encode()).hexdigest()
 
     def save_to_db(self):
-        conn = sqlite3.connect('cinema.db')
+        conn = sqlite3.connect(self._db)
         cursor = conn.cursor()
         cursor.execute('''
         INSERT INTO bank_accounts (account_number, user_id, password, cvv2, balance)
@@ -56,7 +57,7 @@ class BankAccount:
         target_account.deposit(amount)
 
     def update_balance(self):
-        conn = sqlite3.connect('cinema.db')
+        conn = sqlite3.connect(self._db)
         cursor = conn.cursor()
         cursor.execute('''
         UPDATE bank_accounts
