@@ -2,10 +2,17 @@ import uuid
 import sqlite3
 
 class Cinema:
-    def __init__(self, name):
-        self.cinema_id = str(uuid.uuid4())
+    def __init__(self, cinema_id, name):
+        self.cinema_id = cinema_id
         self.name = name
-        self.save_to_db()
+        self.movies = []
+
+    @staticmethod
+    def create_cinema(name):
+        cinema_id = str(uuid.uuid4())
+        cinema = Cinema(cinema_id, name)
+        cinema.save_to_db()
+        return cinema
 
     def save_to_db(self):
         conn = sqlite3.connect('cinema.db')
@@ -17,35 +24,28 @@ class Cinema:
         conn.commit()
         conn.close()
 
-    def add_movie(self, movie):
+    @staticmethod
+    def get_cinema_by_name(name):
         conn = sqlite3.connect('cinema.db')
         cursor = conn.cursor()
         cursor.execute('''
-        INSERT INTO movies (movie_id, title, rating, cinema_id)
-        VALUES (?, ?, ?, ?)
-        ''', (movie.movie_id, movie.title, movie.rating, self.cinema_id))
-        conn.commit()
+        SELECT * FROM cinemas WHERE name = ?
+        ''', (name,))
+        cinema_data = cursor.fetchone()
         conn.close()
+        if cinema_data:
+            return Cinema(*cinema_data)
+        return None
 
-    def update_cinema_details(self, name=None):
-        if name:
-            self.name = name
+    @staticmethod
+    def get_cinema_by_id(cinema_id):
         conn = sqlite3.connect('cinema.db')
         cursor = conn.cursor()
         cursor.execute('''
-        UPDATE cinemas
-        SET name = ?
-        WHERE cinema_id = ?
-        ''', (self.name, self.cinema_id))
-        conn.commit()
+        SELECT * FROM cinemas WHERE cinema_id = ?
+        ''', (cinema_id,))
+        cinema_data = cursor.fetchone()
         conn.close()
-
-    def list_movies(self):
-        conn = sqlite3.connect('cinema.db')
-        cursor = conn.cursor()
-        cursor.execute('''
-        SELECT title FROM movies WHERE cinema_id = ?
-        ''', (self.cinema_id,))
-        movies = cursor.fetchall()
-        conn.close()
-        return [movie[0] for movie in movies]
+        if cinema_data:
+            return Cinema(*cinema_data)
+        return None

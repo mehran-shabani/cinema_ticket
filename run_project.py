@@ -14,19 +14,13 @@ def run_client():
 
 
 def main():
-    # ابتدا ایجاد جداول پایگاه داده
-    result = subprocess.run(["python", "database.py"], capture_output=True, text=True)
-    if result.returncode == 0:
-        print(f"'database.py' با موفقیت اجرا شد.")
-    else:
-        print(f"خطا در اجرای 'database.py':")
-        print(result.stderr)
-        return
-
     # اجرای سرور در نخ جداگانه
     server_thread = threading.Thread(target=run_server)
     server_thread.daemon = True
     server_thread.start()
+
+    # کمی صبر کردن تا سرور به درستی شروع به کار کند
+    time.sleep(2)
 
     # اجرای کلاینت به صورت متناوب
     run_client()

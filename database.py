@@ -1,6 +1,5 @@
 import sqlite3
 
-
 def create_tables():
     conn = sqlite3.connect('cinema.db')
     cursor = conn.cursor()
@@ -10,7 +9,7 @@ def create_tables():
         user_id TEXT PRIMARY KEY,
         username TEXT UNIQUE NOT NULL,
         email TEXT UNIQUE NOT NULL,
-        phone_number TEXT,
+        phone_number INTEGER UNIQUE,
         password TEXT NOT NULL,
         birth_date TEXT NOT NULL,
         registration_date TEXT NOT NULL,
@@ -85,7 +84,6 @@ def create_tables():
 
     conn.commit()
     conn.close()
-
 
 if __name__ == "__main__":
     create_tables()

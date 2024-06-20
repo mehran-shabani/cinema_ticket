@@ -1,16 +1,21 @@
 import uuid
-import datetime
 import sqlite3
 
 class Reservation:
-    def __init__(self, user_id, movie_id, showtime_id, seat_number):
-        self.reservation_id = str(uuid.uuid4())
+    def __init__(self, reservation_id, user_id, movie_id, showtime_id, seat_number, status):
+        self.reservation_id = reservation_id
         self.user_id = user_id
         self.movie_id = movie_id
         self.showtime_id = showtime_id
         self.seat_number = seat_number
-        self.status = "reserved"
-        self.save_to_db()
+        self.status = status
+
+    @staticmethod
+    def create_reservation(user_id, movie_id, showtime_id, seat_number):
+        reservation_id = str(uuid.uuid4())
+        reservation = Reservation(reservation_id, user_id, movie_id, showtime_id, seat_number, "reserved")
+        reservation.save_to_db()
+        return reservation
 
     def save_to_db(self):
         conn = sqlite3.connect('cinema.db')
@@ -22,27 +27,26 @@ class Reservation:
         conn.commit()
         conn.close()
 
-    def cancel_reservation(self, current_time):
-        showtime_datetime = datetime.datetime.strptime(self.showtime_id, "%Y-%m-%d %H:%M")
-        time_diff = showtime_datetime - current_time
-        if time_diff.total_seconds() > 3600:
-            self.status = "canceled"
-            self.update_status()
-            return "Full refund"
-        elif time_diff.total_seconds() > 0:
-            self.status = "canceled"
-            self.update_status()
-            return "18% deduction"
-        else:
-            return "No refund"
-
-    def update_status(self):
+    @staticmethod
+    def get_reservation_by_id(reservation_id):
         conn = sqlite3.connect('cinema.db')
         cursor = conn.cursor()
         cursor.execute('''
-        UPDATE reservations
-        SET status = ?
-        WHERE reservation_id = ?
-        ''', (self.status, self.reservation_id))
-        conn.commit()
+        SELECT * FROM reservations WHERE reservation_id = ?
+        ''', (reservation_id,))
+        reservation_data = cursor.fetchone()
         conn.close()
+        if reservation_data:
+            return Reservation(*reservation_data)
+        return None
+
+    @staticmethod
+    def get_reservations_by_user_id(user_id):
+        conn = sqlite3.connect('cinema.db')
+        cursor = conn.cursor()
+        cursor.execute('''
+        SELECT * FROM reservations WHERE user_id = ?
+        ''', (user_id,))
+        reservations_data = cursor.fetchall()
+        conn.close()
+        return [Reservation(*reservation_data) for reservation_data in reservations_data]

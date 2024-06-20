@@ -1,13 +1,29 @@
 import socket
 import pickle
 
+
 def send_request(request):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_socket.connect(("localhost", 9999))
-    client_socket.send(pickle.dumps(request))
-    response = pickle.loads(client_socket.recv(4096))
-    client_socket.close()
-    return response
+    try:
+        client_socket.connect(("localhost", 9999))
+        client_socket.sendall(pickle.dumps(request))
+        print("Request sent to server:", request)
+
+        data = b""
+        while True:
+            part = client_socket.recv(4096)
+            data += part
+            if len(part) < 4096:
+                break
+        response = pickle.loads(data)
+
+        print("Response received from server:", response)
+        return response
+    except Exception as e:
+        print("Error during communication with server:", e)
+    finally:
+        client_socket.close()
+
 
 def register():
     username = input("نام کاربری: ")
@@ -26,7 +42,9 @@ def register():
     }
 
     response = send_request(request)
-    print(response)
+    if response:
+        print(response)
+
 
 def login():
     username = input("نام کاربری: ")
@@ -37,9 +55,11 @@ def login():
     }
 
     response = send_request(request)
-    print(response)
-    if "خوش آمدید" in response:
-        user_menu(username)
+    if response:
+        print(response)
+        if "خوش آمدید" in response:
+            user_menu(username)
+
 
 def view_cinemas():
     request = {
@@ -47,7 +67,9 @@ def view_cinemas():
     }
 
     response = send_request(request)
-    print(response)
+    if response:
+        print(response)
+
 
 def make_reservation(username):
     cinema_name = input("نام سینما: ")
@@ -64,7 +86,9 @@ def make_reservation(username):
     }
 
     response = send_request(request)
-    print(response)
+    if response:
+        print(response)
+
 
 def view_reservations(username):
     request = {
@@ -73,7 +97,9 @@ def view_reservations(username):
     }
 
     response = send_request(request)
-    print(response)
+    if response:
+        print(response)
+
 
 def user_menu(username):
     while True:
@@ -95,6 +121,7 @@ def user_menu(username):
         else:
             print("گزینه نامعتبر، لطفا دوباره تلاش کنید.")
 
+
 def main_menu():
     while True:
         print("به سیستم رزرو بلیط سینما خوش آمدید")
@@ -112,6 +139,7 @@ def main_menu():
             break
         else:
             print("گزینه نامعتبر، لطفا دوباره تلاش کنید.")
+
 
 if __name__ == "__main__":
     main_menu()

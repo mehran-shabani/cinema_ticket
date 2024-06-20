@@ -2,12 +2,18 @@ import uuid
 import sqlite3
 
 class Movie:
-    def __init__(self, title, cinema_id):
-        self.movie_id = str(uuid.uuid4())
+    def __init__(self, movie_id, title, rating, cinema_id):
+        self.movie_id = movie_id
         self.title = title
-        self.rating = 0
+        self.rating = rating
         self.cinema_id = cinema_id
-        self.save_to_db()
+
+    @staticmethod
+    def create_movie(title, cinema_id):
+        movie_id = str(uuid.uuid4())
+        movie = Movie(movie_id, title, 0.0, cinema_id)
+        movie.save_to_db()
+        return movie
 
     def save_to_db(self):
         conn = sqlite3.connect('cinema.db')
@@ -19,45 +25,26 @@ class Movie:
         conn.commit()
         conn.close()
 
-    def add_showtime(self, showtime):
+    @staticmethod
+    def get_movie_by_id(movie_id):
         conn = sqlite3.connect('cinema.db')
         cursor = conn.cursor()
         cursor.execute('''
-        INSERT INTO showtimes (showtime_id, movie_id, showtime)
-        VALUES (?, ?, ?)
-        ''', (str(uuid.uuid4()), self.movie_id, showtime))
-        conn.commit()
+        SELECT * FROM movies WHERE movie_id = ?
+        ''', (movie_id,))
+        movie_data = cursor.fetchone()
         conn.close()
+        if movie_data:
+            return Movie(*movie_data)
+        return None
 
-    def update_movie_details(self, title=None, rating=None):
-        if title:
-            self.title = title
-        if rating:
-            self.rating = rating
+    @staticmethod
+    def get_movies_by_cinema_id(cinema_id):
         conn = sqlite3.connect('cinema.db')
         cursor = conn.cursor()
         cursor.execute('''
-        UPDATE movies
-        SET title = ?, rating = ?
-        WHERE movie_id = ?
-        ''', (self.title, self.rating, self.movie_id))
-        conn.commit()
+        SELECT * FROM movies WHERE cinema_id = ?
+        ''', (cinema_id,))
+        movies_data = cursor.fetchall()
         conn.close()
-
-    def add_review(self, review):
-        self.calculate_average_rating()
-
-    def calculate_average_rating(self):
-        conn = sqlite3.connect('cinema.db')
-        cursor = conn.cursor()
-        cursor.execute('''
-        SELECT AVG(rating) FROM reviews WHERE movie_id = ?
-        ''', (self.movie_id,))
-        self.rating = cursor.fetchone()[0]
-        cursor.execute('''
-        UPDATE movies
-        SET rating = ?
-        WHERE movie_id = ?
-        ''', (self.rating, self.movie_id))
-        conn.commit()
-        conn.close()
+        return [Movie(*movie_data) for movie_data in movies_data]
