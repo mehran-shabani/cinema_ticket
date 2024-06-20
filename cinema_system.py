@@ -7,6 +7,7 @@ from user import User
 from cinema import Cinema
 from movie import Movie
 from reservation import Reservation
+from showtime import Showtime
 from database import create_tables
 
 
@@ -51,6 +52,9 @@ class CinemaSystem:
 
     def add_movie(self, title, cinema_id):
         return Movie.create_movie(title, cinema_id, self.db)
+
+    def add_showtime(self, movie_id, showtime_str):
+        return Showtime.create_showtime(movie_id, showtime_str, self.db)
 
     def make_reservation(self, user_id, movie_id, showtime_id, seat_number):
         return Reservation.create_reservation(user_id, movie_id, showtime_id, seat_number, self.db)
@@ -124,7 +128,7 @@ class CinemaSystem:
                                     print("سینما یافت نشد.")
                                 pause_and_clear()
                             elif user_choice == "3":
-                                self.view_cinemas()
+                                self.display_cinemas()
                             elif user_choice == "4":
                                 break
                             else:
@@ -133,7 +137,7 @@ class CinemaSystem:
                         else:
                             user_choice = self.user_menu(user)
                             if user_choice == "1":
-                                self.view_cinemas()
+                                self.display_cinemas()
                             elif user_choice == "2":
                                 cinema_name = input("نام سینما: ")
                                 cinema = self.get_cinema(cinema_name)
@@ -141,12 +145,11 @@ class CinemaSystem:
                                     movie_title = input("نام فیلم: ")
                                     showtime_id = input("سانس (YYYY-MM-DD HH:MM): ")
                                     seat_number = input("شماره صندلی: ")
-                                    reservation = self.make_reservation(user.user_id, movie_title, showtime_id,
-                                                                        seat_number)
+                                    reservation = self.make_reservation(user.user_id, movie_title, showtime_id, seat_number)
                                     print(f"رزرو {reservation.reservation_id} با موفقیت انجام شد")
                                     pause_and_clear()
                             elif user_choice == "3":
-                                self.view_reservations(user.user_id)
+                                self.display_reservations(user.user_id)
                             elif user_choice == "4":
                                 break
                             else:
@@ -162,7 +165,7 @@ class CinemaSystem:
                 print("گزینه نامعتبر، لطفا دوباره تلاش کنید.")
                 pause_and_clear()
 
-    def view_cinemas(self):
+    def display_cinemas(self):
         clear_screen()
         cinemas = self.view_cinemas()
         if not cinemas:
@@ -174,14 +177,13 @@ class CinemaSystem:
         input("برای بازگشت به منو کلیدی فشار دهید...")
         clear_screen()
 
-    def view_reservations(self, user_id):
+    def display_reservations(self, user_id):
         clear_screen()
         reservations = self.view_reservations(user_id)
         if not reservations:
             print("هیچ رزروی یافت نشد.")
         for reservation in reservations:
-            print(
-                f"رزرو: {reservation.reservation_id}, شناسه فیلم: {reservation.movie_id}, سانس: {reservation.showtime_id}, صندلی: {reservation.seat_number}, وضعیت: {reservation.status}")
+            print(f"رزرو: {reservation.reservation_id}, شناسه فیلم: {reservation.movie_id}, سانس: {reservation.showtime_id}, صندلی: {reservation.seat_number}, وضعیت: {reservation.status}")
         input("برای بازگشت به منو کلیدی فشار دهید...")
         clear_screen()
 
