@@ -7,7 +7,7 @@ from user import User
 from cinema import Cinema
 from movie import Movie
 from reservation import Reservation
-from showtime import Showtime
+from show_time import Showtime
 from database import create_tables
 
 

@@ -2,7 +2,7 @@ import unittest
 import sqlite3
 import os
 from cinema_system import CinemaSystem
-from show_time import Showtime
+
 
 
 def create_tables(db_name='test_cinema.db'):
@@ -61,6 +61,7 @@ def create_tables(db_name='test_cinema.db'):
     conn.commit()
     conn.close()
 
+
 class TestCinemaSystem(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -88,7 +89,8 @@ class TestCinemaSystem(unittest.TestCase):
         self.cinema_system = CinemaSystem(self.test_db)
 
     def test_register_user(self):
-        user = self.cinema_system.register_user("test_user", "test@example.com", "password123", "1990-01-01", "1234567890")
+        user = self.cinema_system.register_user("test_user", "test@example.com", "password123", "1990-01-01",
+                                                "1234567890")
         self.assertIsNotNone(user.user_id)
         self.assertEqual(user.username, "test_user")
         self.assertEqual(user.email, "test@example.com")
@@ -119,7 +121,8 @@ class TestCinemaSystem(unittest.TestCase):
         self.assertEqual(showtime.showtime, "2024-12-31 20:00:00")
 
     def test_make_reservation(self):
-        user = self.cinema_system.register_user("test_user", "test@example.com", "password123", "1990-01-01", "1234567890")
+        user = self.cinema_system.register_user("test_user", "test@example.com", "password123", "1990-01-01",
+                                                "1234567890")
         cinema = self.cinema_system.add_cinema("Cinema One")
         movie = self.cinema_system.add_movie("Inception", cinema.cinema_id)
         showtime = self.cinema_system.add_showtime(movie.movie_id, "2024-12-31 20:00:00")
@@ -129,7 +132,8 @@ class TestCinemaSystem(unittest.TestCase):
         self.assertEqual(reservation.seat_number, "A1")
 
     def test_view_reservations(self):
-        user = self.cinema_system.register_user("test_user", "test@example.com", "password123", "1990-01-01", "1234567890")
+        user = self.cinema_system.register_user("test_user", "test@example.com", "password123", "1990-01-01",
+                                                "1234567890")
         cinema = self.cinema_system.add_cinema("Cinema One")
         movie = self.cinema_system.add_movie("Inception", cinema.cinema_id)
         showtime = self.cinema_system.add_showtime(movie.movie_id, "2024-12-31 20:00:00")
@@ -137,6 +141,7 @@ class TestCinemaSystem(unittest.TestCase):
         reservations = self.cinema_system.view_reservations(user.user_id)
         self.assertEqual(len(reservations), 1)
         self.assertEqual(reservations[0].seat_number, "A1")
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -5,9 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5f5f3be-f1e4-4831-a81b-914cff3b8831" name="Changes" comment="bug fix">
-      <change afterPath="$PROJECT_DIR$/show_time.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cinema_system.py" beforeDir="false" afterPath="$PROJECT_DIR$/cinema_system.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/test_cinema.db" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/test/test_cinema_system.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_cinema_system.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -103,7 +103,7 @@
       <workItem from="1718896513442" duration="5713000" />
       <workItem from="1718902868348" duration="59000" />
       <workItem from="1718917510205" duration="7169000" />
-      <workItem from="1718924735174" duration="323000" />
+      <workItem from="1718924735174" duration="666000" />
     </task>
     <task id="LOCAL-00001" summary="add project">
       <option name="closed" value="true" />
@@ -145,7 +145,15 @@
       <option name="project" value="LOCAL" />
       <updated>1718924000618</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="bug fix">
+      <option name="closed" value="true" />
+      <created>1718925088386</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1718925088386</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -160,7 +168,7 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/cinema_ticket$bank_account.coverage" NAME="bank_account Coverage Results" MODIFIED="1718920279297" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/cinema_ticket$run_project.coverage" NAME="run_project Coverage Results" MODIFIED="1718921343217" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/cinema_ticket$.coverage" NAME=" Coverage Results" MODIFIED="1718924655106" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
+    <SUITE FILE_PATH="coverage/cinema_ticket$.coverage" NAME=" Coverage Results" MODIFIED="1718925383040" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
     <SUITE FILE_PATH="coverage/cinema_ticket$cinema_system.coverage" NAME="cinema_system Coverage Results" MODIFIED="1718923902502" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/cinema_ticket$server.coverage" NAME="server Coverage Results" MODIFIED="1718900436194" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/cinema_ticket$database.coverage" NAME="database Coverage Results" MODIFIED="1718920273522" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
